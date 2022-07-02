@@ -1,5 +1,5 @@
 thinkpace.ansible_docker
-=========
+========================
 
 This is a very simple role to install docker.
 
