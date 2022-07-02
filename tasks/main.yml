@@ -1,0 +1,39 @@
+---
+- name: Install required packages to adapt sources.list
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop:
+    - ca-certificates
+    - curl
+    - gnupg
+    - lsb-release
+- name: Create keyrings directory
+  ansible.builtin.file:
+    path: "/etc/apt/keyrings"
+    state: directory
+- name: Add docker keyring
+  ansible.builtin.apt_key:
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    state: present
+    keyring: "/etc/apt/keyrings/docker.gpg"
+# {{ ansible_architecture }} returns x86_64 for amd64, so getting dpkg_architecture manually
+- name: Extract architecture
+  ansible.builtin.shell: "dpkg --print-architecture"
+  register: dpkg_architecture
+  changed_when: false
+- name: Adapt sources.list
+  ansible.builtin.template:
+    src: docker.list.j2
+    dest: /etc/apt/sources.list.d/docker.list
+- name: Install docker
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: true
+  loop: 
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-compose-plugin
