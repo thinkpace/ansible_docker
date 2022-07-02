@@ -37,3 +37,11 @@
     - docker-ce-cli
     - containerd.io
     - docker-compose-plugin
+    - python3-pip
+# FIXME remove docker-compose as soon as Ansible module is supporting "docker compose" cli (without hyphen)
+- name: Install Docker SDK and docker-compose
+  ansible.builtin.pip:
+    name: "{{ item }}"
+  loop:
+    - docker
+    - docker-compose
